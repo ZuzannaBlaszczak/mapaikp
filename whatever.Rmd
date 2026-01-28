@@ -1,0 +1,61 @@
+---
+title: "mapa"
+author: "Zuzanna Błaszczak"
+date: "2026-01-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+
+# Load libraries
+library(leaflet)
+
+# Make data with several positions
+data_red <- data.frame(LONG=42+rnorm(10), LAT=23+rnorm(10), PLACE=paste("Red_place_",seq(1,10)))
+data_blue <- data.frame(LONG=42+rnorm(10), LAT=23+rnorm(10), PLACE=paste("Blue_place_",seq(1,10)))
+
+# Initialize the leaflet map:
+m <- leaflet() %>% 
+  setView(lng=42, lat=23, zoom=6 ) %>%
+
+  # Add two tiles
+  addProviderTiles("Esri.WorldImagery", group="background 1") %>%
+  addTiles(options = providerTileOptions(noWrap = TRUE), group="background 2") %>%
+
+  # Add 2 marker groups
+  addCircleMarkers(data=data_red, lng=~LONG , lat=~LAT, radius=8 , color="black",
+                   fillColor="red", stroke = TRUE, fillOpacity = 0.8, group="Red") %>%
+  addCircleMarkers(data=data_blue, lng=~LONG , lat=~LAT, radius=8 , color="black",
+                   fillColor="blue", stroke = TRUE, fillOpacity = 0.8, group="Blue") %>%
+
+  # Add the control widget
+  addLayersControl(overlayGroups = c("Red","Blue") , baseGroups = c("background 1","background 2"), 
+                   options = layersControlOptions(collapsed = FALSE))
+
+m
+
+# save the widget in a html file if needed.
+# library(htmlwidgets)
+# saveWidget(m, file=paste0( getwd(), "/HtmlWidget/bubblemapControl.html"))
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
